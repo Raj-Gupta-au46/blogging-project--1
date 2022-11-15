@@ -7,7 +7,9 @@ const controller=require("../controller/authercontroller")
 router.post("/creatAuthor",controller.creatAuthor)
 router.post("/createblog",controller.createblog)
 router.get("/createnewblog",controller.creatnewblog)
-
+router.put("/updateauthdata/:userId",controller.updateauthdata)
+router.delete("/deleteAuthor/:userId",controller.deleteAuthor)
+router.delete("/delBySpecificField",controller.delBySpecificField)
 
 
 

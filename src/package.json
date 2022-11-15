@@ -4,5 +4,16 @@
     "moment": "^2.29.4",
     "mongoose": "^6.7.2",
     "nodemon": "^2.0.20"
-  }
+  },
+  "name": "src",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "start": "npx nodemon src/index.js"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "description": ""
 }
