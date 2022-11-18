@@ -1,18 +1,18 @@
-const express=require('express')
-const router=express.Router();
-const authermodel=require("../model/newBlogauthor")
-const blogmodel=require("../model/newblog")
-const controller=require("../controller/autherontroller")
-const middleware=require("../Middleware/auth")
+const express = require('express')
+const router = express.Router();
+const authermodel = require("../model/newBlogauthor")
+const blogmodel = require("../model/newblog")
+const controller = require("../controller/autherontroller")
+const middleware = require("../Middleware/auth")
 
-router.post("/creatAuthor",controller.creatAuthor)
-router.post("/createblog",middleware.authentication,controller.createblog)
-router.get("/getBlog",middleware.authentication,controller.getBlog)
-//router.put("/updateauthdata/:authorId",middleware.authentication,middleware.autherisatioin,controller.updateauthdata)
-router.delete("/deleteAuthor/:authorId",middleware.authentication,middleware.autherisatioin,controller.deleteAuthor)
-router.delete("/delBySpecificField",middleware.authentication,middleware.autherisatioin,controller.delBySpecificField)
-router.post("/loginUser",controller.loginUser)
+router.post("/authors", controller.authors)
+router.post("/blogs", middleware.authentication, controller.blogs)
+router.get("/blogs", middleware.authentication, controller.getblogs)
+router.put("/blogs/:blogId", middleware.authentication, middleware.autherisatioin, controller.updateblogs)
+router.delete("/blogs/:blogId", middleware.authentication, middleware.autherisatioin, controller.deletebyparams)
+router.delete("/blogs", middleware.authentication, middleware.autherisatioin, controller.delBySpecificField)
+router.post("/login", controller.login)
 
 
 
-module.exports=router;
+module.exports = router;

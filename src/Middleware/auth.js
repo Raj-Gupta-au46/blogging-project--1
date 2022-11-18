@@ -13,7 +13,7 @@ const authentication = async function (req, res, next) {
             return res.status(401).send({ msg: "request denied" })
         }
         req["x-api-key"] = decodedToken
-        //console.log( req["x-api-key"])
+
         next()
     }
     catch (err) {
@@ -22,27 +22,13 @@ const authentication = async function (req, res, next) {
 }
 
 const autherisatioin = async function (req, res, next) {
-    // let userEmail = req.body.email
-    //     let userPassword = req.body.password
-    // let token = jwt.sign({ authorId: userEmail, password: userPassword }, "BloggingProject-01")
-    // res.status(201).send({ status: true, msg: token })
-    // console.log(token)
 
-    // let decodedToken = jwt.verify(token, "BloggingProject-01")
-    // if (!decodedToken) {
-    //     return res.status(401).send({ status: false, msg: "request denied" })
-    // }
-    // let userDetail = req.params.authorId
-    // let tokenVerify = decodedToken.authorId
-    // if (userDetail != tokenVerify) {
-    //     return res.status(400).send({ msg: "user is unauthorised" })
-    // }
     let authorId = req["x-api-key"].authorId
 
     console.log(authorId)
 
-    let authoridFromQuery = req.query.authorId
-    let blogId = req.params.authorId
+    let authoridFromQuery = req.query.blogId
+    let blogId = req.params.blogId
     console.log(blogId)
     console.log(authoridFromQuery)
 

@@ -1,26 +1,26 @@
 const mongoose = require("mongoose");
-const newBlogAuthor=new mongoose.Schema(
+const newBlogAuthor = new mongoose.Schema(
     {
-        fname:{
-            type:String,
-        required:true
+        fname: {
+            type: String,
+            required: true
         },
-        lname:{
-            type:String,
-        required:true
+        lname: {
+            type: String,
+            required: true
         },
-        gender:{
-            type:String,
-            enum:["Mr","Mrs","Miss"]
+        gender: {
+            type: String,
+            enum: ["Mr", "Mrs", "Miss"]
         },
-        email:{
-            type:String,
-            unique:true,
-            required:true
+        email: {
+            type: String,
+            unique: true,
+            required: true
         },
-        password:{
-            type:String,
-            required:true,
+        password: {
+            type: String,
+            required: true,
         },
 
     },
@@ -30,4 +30,4 @@ const newBlogAuthor=new mongoose.Schema(
 
 
 
-module.exports=mongoose.model("NewUser",newBlogAuthor);
+module.exports = mongoose.model("NewUser", newBlogAuthor);

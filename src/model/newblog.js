@@ -6,17 +6,17 @@ const newBlog = new mongoose.Schema(
         title: {
             type: String,
             required: true,
-            body: String
+            
         },
-        body :{
-            type:String,
-            required:true
+        body: {
+            type: String,
+            required: true
 
         },
         authorId: {
             type: ObjectId,
             ref: "NewUser",
-            required:true
+            required: true
         },
         tags: [String],
         category: {
@@ -29,13 +29,15 @@ const newBlog = new mongoose.Schema(
             createdAt: String,
             updateAt: String,
             deletedAt: String,
-            required:true
+            required: true
         },
         isDeleted: {
             type: Boolean,
             default: false
         },
-        publishedAt: String,
+        publishedAt: {
+            type:Date
+        },
         isPublished: {
             type: Boolean,
             default: false
