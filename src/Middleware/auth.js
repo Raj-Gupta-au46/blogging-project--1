@@ -1,96 +1,78 @@
-const jwt = require("jsonwebtoken");
-const blogModel = require("../model/blogModel")
+const { response } = require('express')
+const jwt = require('jsonwebtoken')
+const newblog = require('../model/newblog')
 
-//////Authenticate//////
-
-const authenticate = function(req, res, next) {
+const authentication = async function (req, res, next) {
     try {
-        let token = req.headers[`x-api-key`];
-
-        if (!token)
-            return res
-                .status(404)
-                .send({
-                    status: false,
-                    msg: "token must be present"
-                });
-
-        let decodedToken = jwt.verify(
-            token,
-            "project-blog team 67",
-            function(err, decode) {
-                if (err) {
-                    return res.status(500).send({
-                        status: false,
-                        msg: "Invalid token"
-                    });
-                }
-                return decode;
-            }
-        );
-        req.token = decodedToken;
-        next();
-    } catch (error) {
-        return res.status(500).send({
-            status: false,
-            msg: error.message
-        });
+        let token = req.headers["x-api-key"]
+        if (!token) {
+            return res.status(404).send({ status: false, msg: "token is required" })
+        }
+        let decodedToken = jwt.verify(token, "BloggingProject-01")
+        if (!decodedToken) {
+            return res.status(401).send({ msg: "request denied" })
+        }
+        req["x-api-key"] = decodedToken
+        //console.log( req["x-api-key"])
+        next()
     }
-};
-
-/////Authorization/////
-
-const authorise = async function(req, res, next) {
-
-    let getBlogByParam = req.params.blogId;
-    if (!getBlogByParam) {
-        return res.status(400).send({
-            status: false,
-            msg: "provide blogId"
-        });
+    catch (err) {
+        return res.status(500).send({ msg: err.message })
     }
-    let getBlogId = await blogModel.findById(getBlogByParam);
-    if (!getBlogId) {
-        return res.status(404).send({
-            status: false,
-            msg: "Invalid blogId"
-        });
-    }
-    if (getBlogId.authorId != req.token.authorId) {
-        return res.status(403).send({
-            status: false,
-            msg: "Permission denied"
-        });
-    }
-    next();
-};
-
-
-
-const authorise2 = async function(req, res, next) {
-
-    let getBlogByQuery = req.query;
-    if (Object.keys(getBlogByQuery).length == 0) {
-        return res.status(400).send({
-            status: false,
-            msg: "data should be provided"
-        });
-    }
-    let allAuthorId= await blogModel.find(getBlogByQuery).select({authorId:1,_id:0 })
-    let filterAuthorId= allAuthorId.filter(index => index.authorId==req.token.authorId)
-  
-    
-    if (filterAuthorId.length <1) {
-        return res.status(400).send({
-            status: false,
-            msg: "Permission Denied"
-        })
-    }
-    next();
 }
 
-module.exports = {
-    authenticate,
-    authorise,
-    authorise2
-};
+const autherisatioin = async function (req, res, next) {
+    // let userEmail = req.body.email
+    //     let userPassword = req.body.password
+    // let token = jwt.sign({ authorId: userEmail, password: userPassword }, "BloggingProject-01")
+    // res.status(201).send({ status: true, msg: token })
+    // console.log(token)
+
+    // let decodedToken = jwt.verify(token, "BloggingProject-01")
+    // if (!decodedToken) {
+    //     return res.status(401).send({ status: false, msg: "request denied" })
+    // }
+    // let userDetail = req.params.authorId
+    // let tokenVerify = decodedToken.authorId
+    // if (userDetail != tokenVerify) {
+    //     return res.status(400).send({ msg: "user is unauthorised" })
+    // }
+    let authorId = req["x-api-key"].authorId
+
+    console.log(authorId)
+
+    let authoridFromQuery = req.query.authorId
+    let blogId = req.params.authorId
+    console.log(blogId)
+    console.log(authoridFromQuery)
+
+    if (blogId) {
+        let blog = await newblog.findById(blogId)
+        if (!blog) {
+            return res.status(404).send({ status: false, msg: "blog not found" })
+        }
+        if (blog.authorId != authorId) {
+            return res.status(403).send({ status: false, msg: "unauthorised" })
+        } else {
+            next()
+        }
+
+    }
+
+    if (authoridFromQuery) {
+        let blog = await newblog.findById(authoridFromQuery)
+        if (!blog) {
+            return res.status(404).send({ status: false, msg: "blog not found" })
+        }
+        if (blog.authorId != authorId) {
+            return res.status(403).send({ status: false, msg: "unauthorised" })
+        } else {
+            next()
+        }
+
+    }
+}
+
+
+module.exports.authentication = authentication
+module.exports.autherisatioin = autherisatioin
