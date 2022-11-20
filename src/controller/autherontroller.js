@@ -31,7 +31,7 @@ const authors = async function (req, res) {
         }
 
         let savedata = await newblogauthor.create(data);
-        return res.status(201).send({ msg: savedata });
+        return res.status(201).send({ msg: savedata }); 
 
     }
     catch (err) {
@@ -42,9 +42,9 @@ const authors = async function (req, res) {
 const blogs = async function (req, res) {
     try {
         let data = req.body;
-        let { title, body, authorId, tags, category, subcategory } = data;
+        let { title, body, authorId, tags, category } = data;
 
-        if (!title || !body || !authorId || !tags || !category || !subcategory) {
+        if (!title || !body || !authorId || !tags || !category ) {
             return res.status(400).send("All fields are mandatory")
         }
         if (newblog.isPublished == true) {
@@ -62,13 +62,15 @@ const getblogs = async function (req, res) {
 
     try {
         const data = req.query
-        const authorId = data.authorId1
+      
         if (!data) {
             return res.status(400).send({ status: false, msg: 'Data is required to find blog' })
         }
-        const findBlog = await newblog.findOne({ _id: authorId })
+        const findBlog = await newblog.findOne({data})
         console.log(findBlog);
-
+        if (findBlog.isDeleted == true) {
+            return res.status(400).send({ status: false, msg: "block does not exist" })
+        }
 
         return res.status(200).send({ status: true, data: findBlog })
     }
@@ -78,77 +80,6 @@ const getblogs = async function (req, res) {
 };
 
 
-// const updateblogs = async function (req, res) {
-//     try {
-//         let data = req.params.authorId;
-//         let data1 = req.body;
-//         let { title, body, category, tags, subcategory } = data1
-//         console.log(data);
-//         console.log(data1);
-//         if (!data) {
-//             return res.status(404).send({ msg: "user not found" })
-//         }
-
-//         if (Object.entries(data1) == 0) {
-//             res.status(400).send({ msg: "bad request" })
-
-//         }
-//         let obj = {}
-
-//         obj["$addToSet"] = {};
-
-//         if ((Object.entries(title).length >= 0)) {
-
-//             let data1 = await newblog.findByIdAndUpdate({ _id: data }, { $set: { title } }, { new: true })
-//             obj.data1
-//             obj.title = title
-
-//             return res.status(200).send({ status: true, msg: data1 })
-//         }
-//         if (body || category || tags || subcategory) {
-//             let data1 = await newblog.findOneAndUpdate({ _id: authorId }, { $push: { body, category, tags, subcategory } }, { new: true })
-
-//         }
-//         if (category) {
-//             obj["$addToSet"]
-
-//         }
-//         let data2 = await newblog.findOneAndUpdate({ _id: authorId }, obj)
-//         return res.status(200).send({ status: true, msg: data2 })
-
-
-//     }
-//     catch (err) {
-//         return res.status(500).send({ msg: "server error" })
-//     }
-// }
-
-
-// const updateblogs = async function (req, res) {
-//     try {
-//         let blogId = req.params.blogId;
-//         let blogData = req.body;
-//         let updateBlog = await BlogModel.findOneAndUpdate(
-//             { _id: blogId, isDeleted: false }    
-//             {
-//                 $set: { title: blogData.title, body: blogData.body, isPublished: true, publishedAt: new Date() }  //want to update or push
-//                 $push: { tags: blogData.tags, subcategory: blogData.subcategory }
-//             }
-//         }
-        
-//             }
-
-//             { new: true })
-
-//         if (!updateBlog) {
-//             return res.status(404).send({ msg: 'Blog not found' })
-//         }
-//         return res.status(200).send({ status: true, msg: updateBlog })
-
-//     } catch (err) {
-//         return res.status(500).send({ status: false, msg: err.message })
-//     }
-// };
 
 const updateblogs = async function (req, res) {
 	try {
@@ -161,6 +92,9 @@ const updateblogs = async function (req, res) {
 		let obj = {};
 
 		const ifPublished = await newblog.findOne({_id:blogId});
+        if(isDeleted==true){
+            return res.status(400).send({status :false , msg : "bad request"});
+        }
         console.log(ifPublished);
 		if (ifPublished.isPublished == false) {
 			obj.isPublished = true;
@@ -196,9 +130,11 @@ const updateblogs = async function (req, res) {
 const deletebyparams = async function (req, res) {
     try {
         let authorId = req.params.newblog
+        if (data.isDeleted == true) {
+            return res.status(400).send({ status: false, msg: "block does not exist" })
+        }
 
-
-        await newblog.findOneAndUpdate({ _id: authorId }, { $set: { isDeleted: true, deletedAt: new Date() } }, { new: true })
+        await newblog.findOneAndUpdate({ _id: authorId }, { $set: { isDeleted: true, deletedAt: new Date() } })
         res.status(200).send({ status: true, data: "deleted successfully" })
     }
     catch (err) {
@@ -240,6 +176,9 @@ const login = async function (req, res) {
         let userEmail = req.body.email
         let userPassword = req.body.password
         let userDetail = await newblogauthor.findOne({ email: userEmail, password: userPassword })
+        // if ((Object.entries(email).length && Object.entries(password).length) == 0) {
+        //     return res.status(400).send({ status: false, msg: "password and email are mandatory" })
+        // }
         if (!userDetail) {
             res.status(400).send({ msg: "username or password doesn't match " })
         }

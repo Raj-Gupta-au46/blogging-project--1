@@ -9,7 +9,7 @@ const newBlogAuthor = new mongoose.Schema(
             type: String,
             required: true
         },
-        gender: {
+        title : {
             type: String,
             enum: ["Mr", "Mrs", "Miss"]
         },

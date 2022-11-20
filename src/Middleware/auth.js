@@ -6,7 +6,7 @@ const authentication = async function (req, res, next) {
     try {
         let token = req.headers["x-api-key"]
         if (!token) {
-            return res.status(404).send({ status: false, msg: "token is required" })
+            return res.status(400).send({ status: false, msg: "token is required" })
         }
         let decodedToken = jwt.verify(token, "BloggingProject-01")
         if (!decodedToken) {
@@ -38,7 +38,7 @@ const autherisatioin = async function (req, res, next) {
             return res.status(404).send({ status: false, msg: "blog not found" })
         }
         if (blog.authorId != authorId) {
-            return res.status(403).send({ status: false, msg: "unauthorised" })
+            return res.status(401).send({ status: false, msg: "unauthorised" })
         } else {
             next()
         }
@@ -51,7 +51,7 @@ const autherisatioin = async function (req, res, next) {
             return res.status(404).send({ status: false, msg: "blog not found" })
         }
         if (blog.authorId != authorId) {
-            return res.status(403).send({ status: false, msg: "unauthorised" })
+            return res.status(401).send({ status: false, msg: "unauthorised" })
         } else {
             next()
         }
