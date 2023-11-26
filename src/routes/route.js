@@ -28,4 +28,11 @@ router.delete(
 );
 router.post("/login", controller.login);
 
+//========================================= review apis ========================================
+
+router.post("/reviews/:userId/create", createReview);
+router.put("/reviews/:userId/update", updateReview);
+router.get("/reviews/:blogId", getReview);
+router.get("/reviews/:userId/delete", deleteReview);
+
 module.exports = router;
